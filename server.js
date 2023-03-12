@@ -27,6 +27,8 @@ connection.connect((err) => {
 app.get('/payment-history-data', async (req, res) => {
   const receiptLink = req.query.receiptLink
 
+  console.log(process.env.SCRAPERAPI_API_KEY)
+
   request(
     'http://api.scraperapi.com?api_key=' + process.env.SCRAPERAPI_API_KEY + '&url=' + receiptLink
   )
