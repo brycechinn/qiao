@@ -1,0 +1,15 @@
+CREATE DATABASE qiao;
+USE qiao;
+
+CREATE TABLE payment_ids (
+  id INT NOT NULL AUTO_INCREMENT,
+  payment_id VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE banned_ips (
+  id INT NOT NULL AUTO_INCREMENT,
+  ip VARCHAR(255) NOT NULL,
+  expiration_date DATETIME NOT NULL,
+  PRIMARY KEY (id)
+);
