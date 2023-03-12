@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>qiao.gg</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,800">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>qiao.gg 💸</h1>
+    <section id="payment-type-container">
+        <label>Payment type</label>
+        <section id="payment-types">
+            <button id="cashapp-button">Cashapp</button>
+            <button id="venmo-button" disabled>Venmo</button>
+            <button id="apple-pay-button" disabled>Apple Pay</button>
+        </section>
+        <code id="recipient-handle"></code>
+    </section>
+    <section id="receipt-link-container">
+            <label for="link-field">Payment receipt link</label>
+            <section class="input-and-button">
+                <input id="link-field" type="text" placeholder="https://cash.app/payments/.../receipt" size="32" required>
+                <button id="validate-button">Validate</button>
+            </section>
+        <span id="validate-status"></span>
+    </section>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
