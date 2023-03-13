@@ -170,7 +170,7 @@ function createCopyButton(element) {
     copyButton.textContent = 'Copy'
 
     copyButton.addEventListener('click', function () {
-        const textToCopy = CASHAPP_RECIPIENT_HANDLE
+        const textToCopy = '$tangrui'
 
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
