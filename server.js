@@ -176,7 +176,7 @@ app.get('/payment-ids', (req, res) => {
 app.post('/payment-ids', (req, res) => {
   const paymentId = req.query.paymentId
 
-  connection.query('SELECT * FROM payment-ids WHERE payment_id = ?', [paymentId], (err, results) => {
+  connection.query('SELECT * FROM payment_ids WHERE payment_id = ?', [paymentId], (err, results) => {
     if (err) {
       console.log('Error querying database:', err)
       return res.status(500).json({ error: 'Internal Server Error' })
@@ -187,7 +187,7 @@ app.post('/payment-ids', (req, res) => {
       return res.status(400).json({ error: 'ID already exists' })
     } else {
       // Payment ID does not exist, insert into database
-      connection.query('INSERT INTO payment-ids (payment_id) VALUES (?)', [paymentId], (err, results) => {
+      connection.query('INSERT INTO payment_ids (payment_id) VALUES (?)', [paymentId], (err, results) => {
         if (err) {
           console.log('Error inserting payment ID:', err)
           return res.status(500).json({ error: 'Internal Server Error' })
