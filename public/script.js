@@ -50,7 +50,7 @@ async function validateReceipt() {
         }
         */
 
-        if (await isExistingPaymentId(paymentId)) {
+        if (!(await isUniquePaymentId(paymentId))) {
             const reason = `Reused payment receipt "${paymentId}"`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
@@ -134,7 +134,7 @@ async function banIp(ip) {
     }
 }
 
-async function isExistingPaymentId(paymentId) {
+async function isUniquePaymentId(paymentId) {
     try {
         const encodedPaymentId = encodeURIComponent(paymentId)
         const response = await fetch(`/payments?paymentId=${encodedPaymentId}`)
@@ -144,10 +144,10 @@ async function isExistingPaymentId(paymentId) {
         }
 
         const data = await response.json()
-        return data.exists
+        return data.success
     } catch (error) {
         console.error(error.message)
-        return null
+        return false
     }
 }
 

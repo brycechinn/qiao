@@ -166,10 +166,10 @@ app.get('/payment-ids', (req, res) => {
       return res.status(500).json({ error: 'Internal Server Error' })
     }
     if (results.length > 0) {
-      return res.json({ exists: true })
+      return res.json({ success: false })
     }
 
-    return res.json({ exists: false })
+    return res.json({ success: true })
   })
 })
 
