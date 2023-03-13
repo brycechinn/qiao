@@ -137,7 +137,7 @@ async function banIp(ip) {
 async function isUniquePaymentId(paymentId) {
     try {
         const encodedPaymentId = encodeURIComponent(paymentId)
-        const response = await fetch(`/payments?paymentId=${encodedPaymentId}`)
+        const response = await fetch(`/payment-ids?paymentId=${encodedPaymentId}`)
 
         if (!response.ok) {
             throw new Error('Could not check payment ID')
@@ -154,7 +154,7 @@ async function isUniquePaymentId(paymentId) {
 async function insertPaymentId(paymentId) {
     try {
         const encodedPaymentId = encodeURIComponent(paymentId)
-        const response = await fetch(`/payments?paymentId=${encodedPaymentId}`, {
+        const response = await fetch(`/payment-ids?paymentId=${encodedPaymentId}`, {
             method: 'POST'
         })
 
