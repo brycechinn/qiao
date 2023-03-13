@@ -5,7 +5,9 @@ function registerButtonCallbacks() {
     cashappButton.addEventListener('click', function () {
         const recipientHandle = document.getElementById('recipient-handle')
         recipientHandle.innerText = '$tangrui'
+        /*
         createCopyButton(recipientHandle)
+        */
     })
 
     validateButton.addEventListener('click', function () {
@@ -172,6 +174,7 @@ function createCopyButton(element) {
     copyButton.addEventListener('click', function () {
         const textToCopy = '$tangrui'
 
+        console.log(navigator.clipboard)
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
                 console.log('Text copied to clipboard')
