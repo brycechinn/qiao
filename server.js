@@ -27,8 +27,6 @@ connection.connect((err) => {
 app.get('/payment-history-data', async (req, res) => {
   const receiptLink = req.query.receiptLink
 
-  console.log(process.env.SCRAPERAPI_API_KEY)
-
   request(
     'http://api.scraperapi.com?api_key=' + process.env.SCRAPERAPI_API_KEY + '&url=' + receiptLink
   )
@@ -127,12 +125,9 @@ app.get('/banned-ips', (req, res) => {
 
 app.post('/banned-ips', (req, res) => {
   const ip = req.query.ip
-  const expirationDate = new Date() // set the expiration date to the current date/time
+  const expirationDate = new Date()
 
-  // add one week to the expiration date
   expirationDate.setDate(expirationDate.getDate() + 7)
-
-  console.log(expirationDate)
 
   connection.query('SELECT * FROM banned_ips WHERE ip = ?', [ip], (err, results) => {
     if (err) {
@@ -141,10 +136,8 @@ app.post('/banned-ips', (req, res) => {
     }
 
     if (results.length > 0) {
-      // IP already banned, do not insert again
       return res.status(400).json({ error: 'IP already banned' })
     } else {
-      // IP not banned, insert into database
       connection.query('INSERT INTO banned_ips (ip, expiration_date) VALUES (?, ?)', [ip, expirationDate], (err, results) => {
         if (err) {
           console.log('Error inserting banned IP:', err)
@@ -183,10 +176,8 @@ app.post('/payment-ids', (req, res) => {
     }
 
     if (results.length > 0) {
-      // Payment ID already exists, do not insert again
       return res.status(400).json({ error: 'ID already exists' })
     } else {
-      // Payment ID does not exist, insert into database
       connection.query('INSERT INTO payment_ids (payment_id) VALUES (?)', [paymentId], (err, results) => {
         if (err) {
           console.log('Error inserting payment ID:', err)
