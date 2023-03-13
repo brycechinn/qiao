@@ -66,7 +66,6 @@ async function validateReceipt() {
 
         insertPaymentId(paymentId)
 
-        console.log(paymentHistoryData)
         validateStatus.textContent = 'Success ✅'
         validateStatus.style.color = '#beeebe'
         receiptLinkContainer.style.backgroundColor = '#00ff0020'
