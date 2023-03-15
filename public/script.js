@@ -1,36 +1,20 @@
 function registerButtonCallbacks() {
-    const cashappButton = document.getElementById('cashapp-button')
     const validateButton = document.getElementById('validate-button')
-
-    cashappButton.addEventListener('click', function () {
-        const recipientHandle = document.getElementById('recipient-handle')
-        recipientHandle.innerText = '$tangrui'
-        /*
-        createCopyButton(recipientHandle)
-        */
-    })
 
     validateButton.addEventListener('click', function () {
         const validateStatus = document.getElementById('validate-status')
-        const bitcoinAddressContainer = document.getElementById('bitcoin-address-container')
-        const receiptLinkContainer = document.getElementById('receipt-link-container')
 
-        if (bitcoinAddressContainer) {
-            bitcoinAddressContainer.remove()
-        }
-
-        receiptLinkContainer.style.backgroundColor = '#eeeeee20'
         validateStatus.textContent = 'Validating...'
-        validateStatus.style.color = '#eeeeee'
 
         validateReceipt()
     })
 }
 
 async function validateReceipt() {
-    const receiptLinkContainer = document.getElementById('receipt-link-container')
     const receiptLinkField = document.getElementById('link-field')
+    const bitcoinAddressField = document.getElementById('address-field')
     const receiptLink = receiptLinkField.value
+    const bitcoinAddress = bitcoinAddressField.value
     const validateStatus = document.getElementById('validate-status')
 
     try {
@@ -67,21 +51,16 @@ async function validateReceipt() {
         }
 
         insertPaymentId(paymentId)
+        sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress)
 
         validateStatus.textContent = 'Success ✅'
-        validateStatus.style.color = '#beeebe'
-        receiptLinkContainer.style.backgroundColor = '#00ff0020'
-        createBitcoinAddressContainer(receiptLinkContainer, paymentHistoryData)
     } catch (error) {
         console.error(error.message)
 
         validateStatus.textContent = 'Failure 🚨'
-        validateStatus.style.color = '#eebebe'
-        receiptLinkContainer.style.backgroundColor = '#ff000020'
 
         const validateFailureReason = document.createElement('span')
         validateFailureReason.textContent = 'Reason: ' + error.message
-        validateFailureReason.style.color = '#eebebe'
         validateFailureReason.setAttribute('id', 'validate-failure-reason')
         validateStatus.appendChild(validateFailureReason)
     }
@@ -207,46 +186,6 @@ function isValidReceiptLink(receiptLink) {
     const regex = /^https:\/\/cash\.app\/payments\/[a-z\d]{25}\/receipt$/
 
     return regex.test(receiptLink)
-}
-
-function createBitcoinAddressContainer(element, paymentHistoryData) {
-    const bitcoinAddressField = document.createElement('input')
-    bitcoinAddressField.setAttribute('type', 'text')
-    bitcoinAddressField.setAttribute('placeholder', 'Enter your Bitcoin address')
-    bitcoinAddressField.setAttribute('id', 'bitcoin-address-field')
-    bitcoinAddressField.setAttribute('size', '32')
-    bitcoinAddressField.setAttribute('required', true)
-
-    const bitcoinAddressLabel = document.createElement('label')
-    bitcoinAddressLabel.setAttribute('for', 'bitcoin-address-field')
-    bitcoinAddressLabel.textContent = 'Bitcoin address'
-
-    const requestButton = document.createElement('button')
-    requestButton.setAttribute('type', 'button')
-    requestButton.setAttribute('id', 'request-button')
-    requestButton.textContent = 'Request'
-
-    const bitcoinAddressFieldRequestButton = document.createElement('span')
-    bitcoinAddressFieldRequestButton.setAttribute('class', 'input-and-button')
-    bitcoinAddressFieldRequestButton.appendChild(bitcoinAddressField)
-    bitcoinAddressFieldRequestButton.appendChild(requestButton)
-
-    const bitcoinAddressContainer = document.createElement('div')
-    bitcoinAddressContainer.setAttribute('id', 'bitcoin-address-container')
-    bitcoinAddressContainer.appendChild(bitcoinAddressLabel)
-    bitcoinAddressContainer.appendChild(bitcoinAddressFieldRequestButton)
-
-    element.insertAdjacentElement('afterend', bitcoinAddressContainer)
-
-    requestButton.addEventListener('click', function () {
-        const amount = paymentHistoryData.detail_rows[0].value
-        const recipient = paymentHistoryData.detail_rows[3].value
-        const sender = paymentHistoryData.detail_rows[4].value
-        const date = paymentHistoryData.support_subtitle
-        const bitcoinAddress = bitcoinAddressField.value
-
-        sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress)
-    })
 }
 
 function sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress) {
