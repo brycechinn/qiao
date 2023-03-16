@@ -10,10 +10,10 @@ app.use(express.static('public'))
 app.use(bodyParser.json())
 
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'qiao'
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME
 })
 
 connection.connect((err) => {
@@ -48,8 +48,8 @@ app.post('/email/success', (req, res) => {
   const bitcoinAddressCopyButton = `<button onclick="copyToClipboard('${bitcoinAddress}')">Copy</button>`
 
   const msg = {
-    to: 'qiao.noreply@gmail.com',
-    from: 'qiao.noreply@gmail.com',
+    to: process.env.EMAIL_RECIPIENT,
+    from: process.env.EMAIL_SENDER,
     subject: `✅ Payment Verification Successful`,
     html: `
       <p>The following payment has been verified successfully:</p>
@@ -80,8 +80,8 @@ app.post('/email/failure', (req, res) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
   const msg = {
-    to: 'qiao.noreply@gmail.com',
-    from: 'qiao.noreply@gmail.com',
+    to: process.env.EMAIL_RECIPIENT,
+    from: process.env.EMAIL_SENDER,
     subject: `🚨 Payment Verification Failed`,
     html: `
       <p>The following payment has failed verification:</p>
