@@ -1,7 +1,7 @@
 function registerButtonCallbacks() {
-    const validateButton = document.getElementById('validate-button')
+    const requestButton = document.getElementById('request-button')
 
-    validateButton.addEventListener('click', function () {
+    requestButton.addEventListener('click', function () {
         const validateStatus = document.getElementById('validate-status')
 
         validateStatus.textContent = 'Validating...'
@@ -18,6 +18,17 @@ async function validateReceipt() {
     const validateStatus = document.getElementById('validate-status')
 
     try {
+        receiptLinkField.style.border = receiptLink ? '1px solid white' : '1px solid red'
+        bitcoinAddressField.style.border = bitcoinAddress ? '1px solid white' : '1px solid red'
+
+        if (!receiptLink || !bitcoinAddress) {
+            throw new Error('Missing required field(s)')
+        }
+
+        if (!isValidReceiptLink(receiptLink)) {
+            throw new Error('Invalid receipt link')
+        }
+
         const paymentHistoryData = await fetchPaymentHistoryData(receiptLink)
         const amount = paymentHistoryData.detail_rows[0].value
         const source = paymentHistoryData.detail_rows[1].value
@@ -26,9 +37,8 @@ async function validateReceipt() {
         const sender = paymentHistoryData.detail_rows[4].value
         const date = paymentHistoryData.support_subtitle
 
-        if (!isValidReceiptLink(receiptLink)) {
-            throw new Error('Invalid receipt link')
-        }
+        const headerSubtext = paymentHistoryData.header_subtext
+        const recipientHandle = getRecipientHandle(headerSubtext)
 
         /*
         if (await isIpBanned('192.168.1.1')) {
@@ -38,6 +48,13 @@ async function validateReceipt() {
 
         if (!(await isUniquePaymentId(paymentId))) {
             const reason = `Reused payment receipt "${paymentId}"`
+
+            sendFailureEmail(amount, recipient, sender, date, reason)
+            throw new Error(reason)
+        }
+
+        if (recipientHandle != '$tangrui') {
+            const reason = `Invalid recipient "${recipientHandle}"`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
             throw new Error(reason)
@@ -180,6 +197,12 @@ function getPaymentHistoryData(html) {
     const match = regex.exec(scriptText)
 
     return JSON.parse(match[1])
+}
+
+function getRecipientHandle(headerSubtext) {
+    const recipientHandle = headerSubtext.match(/\$[\w]+/)[0]
+
+    return recipientHandle
 }
 
 function isValidReceiptLink(receiptLink) {
