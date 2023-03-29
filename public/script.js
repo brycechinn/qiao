@@ -40,11 +40,9 @@ async function validateReceipt() {
         const headerSubtext = paymentHistoryData.header_subtext
         const recipientHandle = getRecipientHandle(headerSubtext)
 
-        /*
         if (await isIpBanned('192.168.1.1')) {
             throw new Error('IP banned')
         }
-        */
 
         if (!(await isUniquePaymentId(paymentId))) {
             const reason = `Reused payment receipt "${paymentId}"`
