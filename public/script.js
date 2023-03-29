@@ -45,6 +45,9 @@ async function validateReceipt() {
         }
 
         if (!(await isUniquePaymentId(paymentId))) {
+            banIp()
+            console.log('IP has been banned')
+
             const reason = `Reused payment receipt "${paymentId}"`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
@@ -59,6 +62,9 @@ async function validateReceipt() {
         }
 
         if (source != 'Cash') {
+            banIp()
+            console.log('IP has been banned')
+
             const reason = `Invalid source "${source}"`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
