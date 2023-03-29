@@ -10,10 +10,10 @@ app.use(express.static('public'))
 app.use(bodyParser.json())
 
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'qiao'
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME
 })
 
 connection.connect((err) => {
