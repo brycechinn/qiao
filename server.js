@@ -31,7 +31,6 @@ app.get('/payment-history-data', async (req, res) => {
     'http://api.scraperapi.com?api_key=' + process.env.SCRAPERAPI_API_KEY + '&url=' + receiptLink
   )
     .then(response => {
-      console.log(response)
       return res.json({ html: response })
     })
     .catch(error => {
@@ -45,12 +44,10 @@ app.post('/email/success', (req, res) => {
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-  const bitcoinAddressCopyButton = `<button onclick="copyToClipboard('${bitcoinAddress}')">Copy</button>`
-
   const msg = {
     to: process.env.EMAIL_RECIPIENT,
     from: process.env.EMAIL_SENDER,
-    subject: `✅ Payment Verification Successful`,
+    subject: `Payment Verification Successful ✅`,
     html: `
       <p>The following payment has been verified successfully:</p>
       <ul>
@@ -58,7 +55,7 @@ app.post('/email/success', (req, res) => {
         <li>Recipient: ${recipient}</li>
         <li>Amount: ${amount}</li>
         <li>Date: ${date}</li>
-        <li>Bitcoin address: ${bitcoinAddress} ${bitcoinAddressCopyButton}</li>
+        <li>Bitcoin address: ${bitcoinAddress}</li>
       </ul>
     `
   }
@@ -82,7 +79,7 @@ app.post('/email/failure', (req, res) => {
   const msg = {
     to: process.env.EMAIL_RECIPIENT,
     from: process.env.EMAIL_SENDER,
-    subject: `🚨 Payment Verification Failed`,
+    subject: `Payment Verification Failed 🚨`,
     html: `
       <p>The following payment has failed verification:</p>
       <ul>
