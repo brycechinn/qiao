@@ -40,7 +40,7 @@ async function validateReceipt() {
         const headerSubtext = paymentHistoryData.header_subtext
         const recipientHandle = getRecipientHandle(headerSubtext)
 
-        if (await isIpBanned('192.168.1.1')) {
+        if (await isIpBanned()) {
             throw new Error('IP banned')
         }
 
@@ -97,10 +97,9 @@ async function fetchPaymentHistoryData(receiptLink) {
 }
 
 
-async function isIpBanned(ip) {
+async function isIpBanned() {
     try {
-        const encodedIp = encodeURIComponent(ip)
-        const response = await fetch(`/banned-ips?ip=${encodedIp}`)
+        const response = await fetch('/banned-ips')
 
         if (!response.ok) {
             throw new Error('Could not check IP')
@@ -114,10 +113,9 @@ async function isIpBanned(ip) {
     }
 }
 
-async function banIp(ip) {
+async function banIp() {
     try {
-        const encodedIp = encodeURIComponent(ip)
-        const response = await fetch(`/banned-ips?ip=${encodedIp}`, {
+        const response = await fetch('/banned-ips', {
             method: 'POST'
         })
 

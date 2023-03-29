@@ -104,12 +104,12 @@ app.post('/email/failure', (req, res) => {
 })
 
 app.get('/banned-ips', (req, res) => {
-  console.log('Client IP: ' + req.socket.remoteAddress)
+  const ipv6Address = req.socket.remoteAddress
+  const ipv4Address = IPv6ToIPv4(ipv6Address)
 
-  const ip = req.query.ip
+  console.log('Client IP: ' + ipv4Address)
 
-  // TODO: add expiration date to ban 'AND expiration_date > NOW()'
-  connection.query('SELECT * FROM banned_ips WHERE ip = ?', [ip], (err, results) => {
+  connection.query('SELECT * FROM banned_ips WHERE ip = ? AND expiration_date > NOW()', [ipv4Address], (err, results) => {
     if (err) {
       console.log('Error querying database:', err)
       return res.status(500).json({ error: 'Internal Server Error' })
@@ -123,12 +123,14 @@ app.get('/banned-ips', (req, res) => {
 })
 
 app.post('/banned-ips', (req, res) => {
-  const ip = req.query.ip
+  const ipv6Address = req.socket.remoteAddress
+  const ipv4Address = IPv6ToIPv4(ipv6Address)
+
   const expirationDate = new Date()
 
   expirationDate.setDate(expirationDate.getDate() + 7)
 
-  connection.query('SELECT * FROM banned_ips WHERE ip = ?', [ip], (err, results) => {
+  connection.query('SELECT * FROM banned_ips WHERE ip = ?', [ipv4Address], (err, results) => {
     if (err) {
       console.log('Error querying database:', err)
       return res.status(500).json({ error: 'Internal Server Error' })
@@ -137,7 +139,7 @@ app.post('/banned-ips', (req, res) => {
     if (results.length > 0) {
       return res.status(400).json({ error: 'IP already banned' })
     } else {
-      connection.query('INSERT INTO banned_ips (ip, expiration_date) VALUES (?, ?)', [ip, expirationDate], (err, results) => {
+      connection.query('INSERT INTO banned_ips (ip, expiration_date) VALUES (?, ?)', [ipv4Address, expirationDate], (err, results) => {
         if (err) {
           console.log('Error inserting banned IP:', err)
           return res.status(500).json({ error: 'Internal Server Error' })
@@ -200,3 +202,11 @@ app.post('/', (req, res) => {
 app.listen(80, () => {
   console.log('Server listening on port 80')
 })
+
+function IPv6ToIPv4(ipv6Address) {
+  const ipv4Regex = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/;
+  const match = ipv6Address.match(ipv4Regex);
+  
+  return match ? match[1] : null;
+}
+
