@@ -109,13 +109,13 @@ app.get('/banned-ips', (req, res) => {
 
   console.log('Client IP: ' + ipv4Address)
 
-  connection.query('SELECT * FROM banned_ips WHERE ip = ? AND expiration_date > NOW()', [ipv4Address], (err, results) => {
+  connection.query('SELECT ip, expiration_date FROM banned_ips WHERE ip = ? AND expiration_date > NOW()', [ipv4Address], (err, results) => {
     if (err) {
       console.log('Error querying database:', err)
       return res.status(500).json({ error: 'Internal Server Error' })
     }
     if (results.length > 0) {
-      return res.json({ banned: true })
+      return res.json({ banned: true, expirationDate: results[0].expiration_date })
     } else {
       return res.json({ banned: false })
     }

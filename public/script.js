@@ -41,21 +41,22 @@ async function validateReceipt() {
         const recipientHandle = getRecipientHandle(headerSubtext)
 
         if (await isIpBanned()) {
-            throw new Error('IP banned')
+            throw new Error('IP is banned.')
         }
 
         if (!(await isUniquePaymentId(paymentId))) {
             banIp()
-            console.log('IP has been banned')
 
-            const reason = `Reused payment receipt "${paymentId}"`
+            const reason = `Reused payment receipt with identifier "${paymentId}". IP has been banned for one week.`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
             throw new Error(reason)
         }
 
         if (recipientHandle != '$tangrui') {
-            const reason = `Invalid recipient "${recipientHandle}"`
+            banIp()
+            
+            const reason = `Invalid recipient "${recipientHandle}". IP has been banned for one week.`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
             throw new Error(reason)
@@ -63,9 +64,8 @@ async function validateReceipt() {
 
         if (source != 'Cash') {
             banIp()
-            console.log('IP has been banned')
 
-            const reason = `Invalid source "${source}"`
+            const reason = `Invalid source "${source}". IP has been banned for one week.`
 
             sendFailureEmail(amount, recipient, sender, date, reason)
             throw new Error(reason)
