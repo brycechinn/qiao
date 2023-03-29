@@ -104,9 +104,9 @@ app.post('/email/failure', (req, res) => {
 })
 
 app.get('/banned-ips', (req, res) => {
-  const ip = req.query.ip
+  console.log('Client IP: ' + req.socket.remoteAddress)
 
-  console.log(req.socket.remoteAddress)
+  const ip = req.query.ip
 
   // TODO: add expiration date to ban 'AND expiration_date > NOW()'
   connection.query('SELECT * FROM banned_ips WHERE ip = ?', [ip], (err, results) => {
