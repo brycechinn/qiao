@@ -53,7 +53,7 @@ async function validateReceipt() {
             throw new Error(reason)
         }
 
-        if (recipientHandle != '$tangrui') {
+        if (recipientHandle != '$tickeh') {
             banIp()
             
             const reason = `Invalid recipient "${recipientHandle}". IP has been banned for one week.`
@@ -163,31 +163,6 @@ async function insertPaymentId(paymentId) {
     } catch (error) {
         console.error(error.message)
     }
-}
-
-function createCopyButton(element) {
-    const copyButton = document.createElement('button')
-    copyButton.textContent = 'Copy'
-
-    copyButton.addEventListener('click', function () {
-        const textToCopy = '$tangrui'
-
-        console.log(navigator.clipboard)
-        navigator.clipboard.writeText(textToCopy)
-            .then(() => {
-                console.log('Text copied to clipboard')
-                copyButton.textContent = 'Copied!'
-
-                setTimeout(() => {
-                    copyButton.textContent = 'Copy'
-                }, 1000)
-            })
-            .catch((error) => {
-                console.error('Failed to copy text: ', error)
-            })
-    })
-
-    element.appendChild(copyButton)
 }
 
 function getPaymentHistoryData(html) {
