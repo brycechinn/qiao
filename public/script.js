@@ -30,15 +30,7 @@ async function validateReceipt() {
         }
 
         const paymentHistoryData = await fetchPaymentHistoryData(receiptLink)
-        const amount = paymentHistoryData.detail_rows[0].value
-        const source = paymentHistoryData.detail_rows[1].value
-        const paymentId = paymentHistoryData.detail_rows[2].value
-        const recipient = paymentHistoryData.detail_rows[3].value
-        const sender = paymentHistoryData.detail_rows[4].value
-        const date = paymentHistoryData.support_subtitle
-
-        const headerSubtext = paymentHistoryData.header_subtext
-        const recipientHandle = getRecipientHandle(headerSubtext)
+        const [, recipientHandle, amount, source, paymentId, recipient, sender] = paymentHistoryData.match(/Payment\s+to\s+(\$.*?)\$.*?Amount(.*?)Source(.*?)Identifier(.*?)To(.*?)From(.*)/);
 
         if (await isIpBanned()) {
             throw new Error('IP is banned.')
@@ -49,7 +41,7 @@ async function validateReceipt() {
 
             const reason = `Reused payment receipt with identifier "${paymentId}". IP has been banned for one week.`
 
-            sendFailureEmail(amount, recipient, sender, date, reason)
+            sendFailureEmail(amount, recipient, sender, reason)
             throw new Error(reason)
         }
 
@@ -58,7 +50,7 @@ async function validateReceipt() {
             
             const reason = `Invalid recipient "${recipientHandle}". IP has been banned for one week.`
 
-            sendFailureEmail(amount, recipient, sender, date, reason)
+            sendFailureEmail(amount, recipient, sender, reason)
             throw new Error(reason)
         }
 
@@ -67,12 +59,12 @@ async function validateReceipt() {
 
             const reason = `Invalid source "${source}". IP has been banned for one week.`
 
-            sendFailureEmail(amount, recipient, sender, date, reason)
+            sendFailureEmail(amount, recipient, sender, reason)
             throw new Error(reason)
         }
 
         insertPaymentId(paymentId)
-        sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress)
+        sendSuccessEmail(amount, recipient, sender, bitcoinAddress)
 
         validateStatus.textContent = 'Success ✅'
     } catch (error) {
@@ -169,11 +161,7 @@ function getPaymentHistoryData(html) {
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = html
 
-    const scriptText = tempDiv.querySelector('#__next script').innerText
-    const regex = /var bootstrap = {paymentHistoryData: (.*) };/
-    const match = regex.exec(scriptText)
-
-    return JSON.parse(match[1])
+    return tempDiv.querySelector('.css-nzo54n').innerText
 }
 
 function getRecipientHandle(headerSubtext) {
@@ -188,7 +176,7 @@ function isValidReceiptLink(receiptLink) {
     return regex.test(receiptLink)
 }
 
-function sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress) {
+function sendSuccessEmail(amount, recipient, sender, bitcoinAddress) {
     fetch('/email/success', {
         method: 'POST',
         headers: {
@@ -198,7 +186,6 @@ function sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress) {
             amount: amount,
             recipient: recipient,
             sender: sender,
-            date: date,
             bitcoinAddress: bitcoinAddress
         })
     })
@@ -207,7 +194,7 @@ function sendSuccessEmail(amount, recipient, sender, date, bitcoinAddress) {
         .catch(error => console.error(error))
 }
 
-function sendFailureEmail(amount, recipient, sender, date, reason) {
+function sendFailureEmail(amount, recipient, sender, reason) {
     fetch('/email/failure', {
         method: 'POST',
         headers: {
@@ -217,7 +204,6 @@ function sendFailureEmail(amount, recipient, sender, date, reason) {
             amount: amount,
             recipient: recipient,
             sender: sender,
-            date: date,
             reason: reason
         })
     })
