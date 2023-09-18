@@ -45,7 +45,7 @@ app.post('/email/success', (req, res) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
   const msg = {
-    to: process.env.EMAIL_RECIPIENT,
+    to: [process.env.EMAIL_RECIPIENT, process.env.EMAIL_SENDER],
     from: process.env.EMAIL_SENDER,
     subject: `Payment Verification Successful ✅`,
     html: `
@@ -76,7 +76,7 @@ app.post('/email/failure', (req, res) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
   const msg = {
-    to: process.env.EMAIL_RECIPIENT,
+    to: [process.env.EMAIL_RECIPIENT, process.env.EMAIL_SENDER],
     from: process.env.EMAIL_SENDER,
     subject: `Payment Verification Failed 🚨`,
     html: `
