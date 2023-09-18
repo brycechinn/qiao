@@ -45,7 +45,7 @@ async function validateReceipt() {
             throw new Error(reason)
         }
 
-        if (recipientHandle.toLowerCase() != '$tickeh') {
+        if (recipientHandle.toLowerCase() != '$zhangwilly') {
             banIp()
             
             const reason = `Invalid recipient "${recipientHandle}". IP has been banned for one week.`
