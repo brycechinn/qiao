@@ -22,15 +22,23 @@ async function validateReceipt() {
         bitcoinAddressField.style.border = bitcoinAddress ? '1px solid white' : '1px solid red'
 
         if (!receiptLink || !bitcoinAddress) {
-            throw new Error('Missing required field(s)')
+            throw new Error('Missing required field(s).')
         }
 
         if (!isValidReceiptLink(receiptLink)) {
-            throw new Error('Invalid receipt link')
+            throw new Error('Invalid receipt link.')
         }
 
         const paymentHistoryData = await fetchPaymentHistoryData(receiptLink)
-        const [, recipientHandle, amount, source, paymentId, recipient, sender] = paymentHistoryData.match(/Payment\s+to\s+(\$.*?)\$.*?Amount(.*?)Source(.*?)Identifier(.*?)To(.*?)From(.*)/);
+
+        const incomingRegex = /Payment\s+from\s+(\$.*?)\$.*?Amount(.*?)Destination(.*?)Identifier(.*?)To(.*?)From(.*)Block,\sInc\./;
+        const outgoingRegex = /Payment\s+to\s+(\$.*?)\$.*?Amount(.*?)Source(.*?)Identifier(.*?)To(.*?)From(.*)Block,\sInc\./
+
+        if (incomingRegex.test(paymentHistoryData)) {
+            throw new Error('Receipt must be outgoing.')
+        }
+
+        const [, recipientHandle, amount, source, paymentId, recipient, sender] = paymentHistoryData.match(outgoingRegex);
 
         if (await isIpBanned()) {
             throw new Error('IP is banned.')
@@ -171,7 +179,7 @@ function getRecipientHandle(headerSubtext) {
 }
 
 function isValidReceiptLink(receiptLink) {
-    const regex = /^https:\/\/cash\.app\/payments\/[a-z\d]{25}\/receipt$/
+    const regex = /^https:\/\/cash\.app\/payments\/[a-z\d]{25}\/receipt/
 
     return regex.test(receiptLink)
 }
