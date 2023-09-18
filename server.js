@@ -28,7 +28,7 @@ app.get('/payment-history-data', async (req, res) => {
   const receiptLink = req.query.receiptLink
 
   request(
-    'http://api.scraperapi.com?api_key=' + process.env.SCRAPERAPI_API_KEY + '&url=' + receiptLink
+    'http://api.scraperapi.com?api_key=' + process.env.SCRAPERAPI_API_KEY + '&url=' + receiptLink + '&render=true'
   )
     .then(response => {
       return res.json({ html: response })
@@ -40,7 +40,7 @@ app.get('/payment-history-data', async (req, res) => {
 })
 
 app.post('/email/success', (req, res) => {
-  const { amount, recipient, sender, date, bitcoinAddress } = req.body
+  const { amount, recipient, sender, bitcoinAddress } = req.body
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
@@ -54,7 +54,6 @@ app.post('/email/success', (req, res) => {
         <li>Sender: ${sender}</li>
         <li>Recipient: ${recipient}</li>
         <li>Amount: ${amount}</li>
-        <li>Date: ${date}</li>
         <li>Bitcoin address: ${bitcoinAddress}</li>
       </ul>
     `
@@ -72,7 +71,7 @@ app.post('/email/success', (req, res) => {
 })
 
 app.post('/email/failure', (req, res) => {
-  const { amount, recipient, sender, date, reason } = req.body
+  const { amount, recipient, sender, reason } = req.body
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
@@ -86,7 +85,6 @@ app.post('/email/failure', (req, res) => {
         <li>Sender: ${sender}</li>
         <li>Recipient: ${recipient}</li>
         <li>Amount: ${amount}</li>
-        <li>Date: ${date}</li>
         <li>Reason: ${reason}</li>
       </ul>
     `
@@ -209,4 +207,3 @@ function IPv6ToIPv4(ipv6Address) {
   
   return match ? match[1] : null;
 }
-
