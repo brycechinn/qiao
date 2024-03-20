@@ -22,11 +22,42 @@ $brightalt5blue: #1879da;
     z-index: 8;
 }
 
+.accountPopup > * {
+    min-height: 59px;
+    min-width: 186px;
+    width: 100%;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    text-align: right;
+    justify-content: flex-end;
+    align-items: center;
+    display: flex;
+}
+
+.accountPopup * {
+    text-align: right;
+}
+
 .header > .logo {
     margin: 0 1rem;
     color: white;
     font-weight: 600;
     text-decoration: unset;
+}
+
+.accountPopup #logout {
+    transition: background-color 50ms ease-in-out;
+    background-color: #f75d4f;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.accountPopup #logout:hover {
+    background-color: #d45044;
+}
+
+.accountPopup #logout:active {
+    background-color: #c74c40;
 }
 
 @media screen and (max-width: 1350px) {
@@ -65,7 +96,7 @@ $brightalt5blue: #1879da;
         background: rgb(50, 50, 50);
         top: 0px;
         padding: 12px;
-        align-items: flex-start !important;
+        align-items: start !important;
         min-width: 250px;
         z-index: 5;
     }
@@ -128,6 +159,18 @@ $brightalt5blue: #1879da;
     }
 }
 
+.accountPopup .link {
+    transition: color 100ms ease-in-out;
+    color: rgb(255, 255, 255, 0.4);
+    padding: 1.25rem 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    text-decoration: unset;
+    display: flex;
+    align-items: center;
+    text-wrap: nowrap;
+}
+
 .header .link {
     transition: color 100ms ease-in-out;
     color: rgb(255, 255, 255, 0.4);
@@ -138,6 +181,18 @@ $brightalt5blue: #1879da;
     display: flex;
     align-items: center;
     text-wrap: nowrap;
+}
+
+.header .account-alt {
+    margin-left: auto;
+}
+
+.accountPopup .link.active {
+    color: $brightlightgold !important;
+}
+
+.accountPopup .link:hover {
+    color: white;
 }
 
 .header .link.active {
@@ -193,4 +248,54 @@ $brightalt5blue: #1879da;
 
 .header > .account .signup:active {
     background: darken($brightalt5blue, 5);
+}
+
+// ok anything after this is me
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.1s forwards;
+    &.closing {
+        animation: fadeOut 0.1s backwards;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        position: relative;
+        animation: scaleUp 0.1s;
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
 }
